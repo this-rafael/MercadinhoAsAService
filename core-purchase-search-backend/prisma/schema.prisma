@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model assets {
+  id          BigInt      @id
+  created_at  DateTime    @default(now()) @db.Timestamp(6)
+  updated_at  DateTime    @default(now()) @db.Timestamp(6)
+  eid         String      @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String      @db.VarChar(50)
+  url         String      @db.VarChar(255)
+  type        Int
+  productid   BigInt?
+  products    products?   @relation(fields: [productid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assets_type assets_type @relation(fields: [type], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model assets_type {
+  id         Int      @id
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime @default(now()) @db.Timestamp(6)
+  name       String   @unique @db.VarChar(50)
+  assets     assets[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model coupon {
+  id            BigInt         @id
+  created_at    DateTime       @default(now()) @db.Timestamp(6)
+  updated_at    DateTime       @default(now()) @db.Timestamp(6)
+  eid           String         @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  code          String         @db.VarChar(50)
+  discount      Float
+  available_at  DateTime       @db.Timestamp(6)
+  expires_at    DateTime       @db.Timestamp(6)
+  active        Boolean
+  used_at       DateTime?      @db.Timestamp(6)
+  shopping_cart shopping_cart?
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model customers {
+  id                BigInt              @id
+  eid               String              @unique @db.Uuid
+  full_name         String              @db.VarChar(50)
+  customers_reviews customers_reviews[]
+  shopping_cart     shopping_cart[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model customers_reviews {
+  id          BigInt    @id
+  created_at  DateTime  @default(now()) @db.Timestamp(6)
+  updated_at  DateTime  @default(now()) @db.Timestamp(6)
+  eid         String    @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  customer_id BigInt
+  product_id  BigInt
+  rating      Int
+  comment     String    @db.VarChar(255)
+  customers   customers @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  products    products  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model product_categories {
+  id          Int        @id
+  created_at  DateTime   @default(now()) @db.Timestamp(6)
+  updated_at  DateTime   @default(now()) @db.Timestamp(6)
+  name        String     @db.VarChar(50)
+  description String     @db.VarChar(255)
+  eid         String     @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  products    products[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model products {
+  id                     BigInt                   @id
+  created_at             DateTime                 @default(now()) @db.Timestamp(6)
+  updated_at             DateTime                 @default(now()) @db.Timestamp(6)
+  eid                    String                   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                   String                   @db.VarChar(50)
+  description            String                   @db.VarChar(255)
+  category               Int
+  seller_by_id           BigInt
+  price                  Float
+  assets                 assets[]
+  customers_reviews      customers_reviews[]
+  product_categories     product_categories       @relation(fields: [category], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sellers                sellers                  @relation(fields: [seller_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  shopping_cart_products shopping_cart_products[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model sellers {
+  id        BigInt     @id
+  eid       String     @unique @db.Uuid
+  full_name String     @db.VarChar(50)
+  products  products[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model shopping_cart {
+  id                     BigInt                   @id
+  created_at             DateTime                 @default(now()) @db.Timestamp(6)
+  updated_at             DateTime                 @default(now()) @db.Timestamp(6)
+  eid                    String                   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  shopped_by_id          BigInt
+  products_quantity      Int
+  products_price         Float
+  total                  Float
+  coupon_id              BigInt?                  @unique
+  coupon                 coupon?                  @relation(fields: [coupon_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  customers              customers                @relation(fields: [shopped_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  shopping_cart_products shopping_cart_products[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model shopping_cart_products {
+  id               BigInt        @id
+  created_at       DateTime      @default(now()) @db.Timestamp(6)
+  updated_at       DateTime      @default(now()) @db.Timestamp(6)
+  shopping_cart_id BigInt
+  productid        BigInt
+  quantity         Int
+  products         products      @relation(fields: [productid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  shopping_cart    shopping_cart @relation(fields: [shopping_cart_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}

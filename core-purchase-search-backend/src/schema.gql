@@ -1,0 +1,42 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type GenericOutput {
+  success: Boolean!
+  message: String!
+  timestamp: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type FullProductObject {
+  categoryId: String!
+  createdAt: DateTime!
+  description: String!
+  name: String!
+  price: Float!
+  category: Float
+  seller: Float
+  sellerEid: String!
+  updatedAt: DateTime!
+}
+
+type Query {
+  products: GenericOutput!
+}
+
+type Mutation {
+  createProduct(product: CreateProductInput!): FullProductObject!
+}
+
+input CreateProductInput {
+  sellerEid: String!
+  name: String!
+  description: String!
+  price: Float!
+  category: String!
+}
