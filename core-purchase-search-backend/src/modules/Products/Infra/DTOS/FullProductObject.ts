@@ -1,10 +1,10 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { FullProductModel } from '../../Core/Models/ProductsModels';
 
 @ObjectType()
 export class FullProductObject {
   constructor(builder: FullProductModel) {
-    Object.assign(this, builder);
+    Object.assign(this, builder.fullProduct);
   }
 
   @Field()

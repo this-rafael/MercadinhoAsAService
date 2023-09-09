@@ -1,8 +1,5 @@
-import { ProductCategoryModel } from './ProductCategoryModel';
+import { ProductCategoryModel } from '../Models/ProductCategoryModel';
 
 export abstract class CreateCategoryProtocol {
-  abstract create(
-    category: string,
-    sellerId: number,
-  ): Promise<ProductCategoryModel>;
+  abstract create(category: string): Promise<ProductCategoryModel>;
 }

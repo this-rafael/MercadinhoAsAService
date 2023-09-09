@@ -1,5 +1,5 @@
 import { StatusCodes } from './StatusCodes';
-import { ExceptionCause } from './Causes/ExceptionCause';
+import { ExceptionCause } from './ExceptionCause';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { GqlArgumentsHost } from '@nestjs/graphql';
 

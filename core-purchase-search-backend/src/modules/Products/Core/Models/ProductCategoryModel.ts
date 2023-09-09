@@ -1,5 +1,3 @@
-import { ToPrisma } from '../../../Global/Models/ToPrisma';
-
 export interface ProductCategoryProps {
   id: string;
   eid: string;
@@ -9,7 +7,7 @@ export interface ProductCategoryProps {
   updatedAt: Date;
 }
 
-export class ProductCategoryModel implements ToPrisma {
+export class ProductCategoryModel {
   constructor(private readonly props: ProductCategoryProps) {
     Object.freeze(this);
   }
@@ -20,13 +18,9 @@ export class ProductCategoryModel implements ToPrisma {
       eid: prismaResult.eid,
       name: prismaResult.name,
       description: prismaResult.description,
-      createdAt: prismaResult.createdAt,
-      updatedAt: prismaResult.updatedAt,
+      createdAt: prismaResult.created_at,
+      updatedAt: prismaResult.updated_at,
     });
-  }
-
-  toPrisma<T = Record<string, any>>(): T {
-    throw new Error('Method not implemented.');
   }
 
   get id(): string {

@@ -1,5 +1,5 @@
 import { StatusCodes } from '../StatusCodes';
-import { ExceptionCause } from './ExceptionCause';
+import { ExceptionCause } from '../ExceptionCause';
 export const enum EntitiesNames {
   Seller = 'Seller',
   Product = 'Product',

@@ -9,15 +9,15 @@ datasource db {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model assets {
-  id          BigInt      @id
+  id          Int         @id @default(autoincrement())
   created_at  DateTime    @default(now()) @db.Timestamp(6)
   updated_at  DateTime    @default(now()) @db.Timestamp(6)
   eid         String      @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name        String      @db.VarChar(50)
   url         String      @db.VarChar(255)
   type        Int
-  productid   BigInt?
-  products    products?   @relation(fields: [productid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product_id  Int?
+  products    products?   @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   assets_type assets_type @relation(fields: [type], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -32,7 +32,7 @@ model assets_type {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model coupon {
-  id            BigInt         @id
+  id            Int            @id @default(autoincrement())
   created_at    DateTime       @default(now()) @db.Timestamp(6)
   updated_at    DateTime       @default(now()) @db.Timestamp(6)
   eid           String         @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
@@ -47,7 +47,7 @@ model coupon {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model customers {
-  id                BigInt              @id
+  id                Int                 @id @default(autoincrement())
   eid               String              @unique @db.Uuid
   full_name         String              @db.VarChar(50)
   customers_reviews customers_reviews[]
@@ -56,12 +56,12 @@ model customers {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model customers_reviews {
-  id          BigInt    @id
+  id          Int       @id @default(autoincrement())
   created_at  DateTime  @default(now()) @db.Timestamp(6)
   updated_at  DateTime  @default(now()) @db.Timestamp(6)
   eid         String    @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  customer_id BigInt
-  product_id  BigInt
+  customer_id Int
+  product_id  Int
   rating      Int
   comment     String    @db.VarChar(255)
   customers   customers @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -70,7 +70,7 @@ model customers_reviews {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model product_categories {
-  id          Int        @id
+  id          Int        @id @default(autoincrement())
   created_at  DateTime   @default(now()) @db.Timestamp(6)
   updated_at  DateTime   @default(now()) @db.Timestamp(6)
   name        String     @db.VarChar(50)
@@ -81,25 +81,25 @@ model product_categories {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model products {
-  id                     BigInt                   @id
+  id                     Int                      @id @default(autoincrement())
   created_at             DateTime                 @default(now()) @db.Timestamp(6)
   updated_at             DateTime                 @default(now()) @db.Timestamp(6)
   eid                    String                   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name                   String                   @db.VarChar(50)
   description            String                   @db.VarChar(255)
   category               Int
-  seller_by_id           BigInt
+  seller_id              Int
   price                  Float
   assets                 assets[]
   customers_reviews      customers_reviews[]
   product_categories     product_categories       @relation(fields: [category], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  sellers                sellers                  @relation(fields: [seller_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  sellers                sellers                  @relation(fields: [seller_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   shopping_cart_products shopping_cart_products[]
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model sellers {
-  id        BigInt     @id
+  id        Int        @id @default(autoincrement())
   eid       String     @unique @db.Uuid
   full_name String     @db.VarChar(50)
   products  products[]
@@ -107,15 +107,15 @@ model sellers {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model shopping_cart {
-  id                     BigInt                   @id
+  id                     Int                      @id @default(autoincrement())
   created_at             DateTime                 @default(now()) @db.Timestamp(6)
   updated_at             DateTime                 @default(now()) @db.Timestamp(6)
   eid                    String                   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  shopped_by_id          BigInt
+  shopped_by_id          Int
   products_quantity      Int
   products_price         Float
   total                  Float
-  coupon_id              BigInt?                  @unique
+  coupon_id              Int?                     @unique
   coupon                 coupon?                  @relation(fields: [coupon_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   customers              customers                @relation(fields: [shopped_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   shopping_cart_products shopping_cart_products[]
@@ -123,11 +123,11 @@ model shopping_cart {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model shopping_cart_products {
-  id               BigInt        @id
+  id               Int           @id @default(autoincrement())
   created_at       DateTime      @default(now()) @db.Timestamp(6)
   updated_at       DateTime      @default(now()) @db.Timestamp(6)
-  shopping_cart_id BigInt
-  productid        BigInt
+  shopping_cart_id Int
+  productid        Int
   quantity         Int
   products         products      @relation(fields: [productid], references: [id], onDelete: NoAction, onUpdate: NoAction)
   shopping_cart    shopping_cart @relation(fields: [shopping_cart_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

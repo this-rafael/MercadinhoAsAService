@@ -1,7 +1,8 @@
 import { ICreateProducts } from '../Interfaces/ICreateProducts';
 import {
-  BaseInputProductModel,
+  BaseInputProductProps,
   FullProductModel,
+  FullProductProps,
 } from '../Models/ProductsModels';
 import { CheckIfCategoryExistsProtocol } from '../Protocols/CheckIfCategoryExistsProtocol';
 import { CheckIfSellerExistsProtocol } from '../Protocols/CheckIfSellerExistsProtocol';
@@ -14,7 +15,6 @@ import {
   NotFoundEntity,
 } from '../../../Global/Exceptions/Causes/NotFoundEntity';
 import { CreateProductProtocol } from '../Protocols/CreateProductProtocol';
-import { Catch } from '../../../Global/Util/Catch';
 
 export class CreateProductsUsecase implements ICreateProducts {
   constructor(
@@ -25,10 +25,10 @@ export class CreateProductsUsecase implements ICreateProducts {
   ) {}
 
   async perform(
-    createProduct: BaseInputProductModel,
+    createProduct: BaseInputProductProps,
   ): Promise<FullProductModel> {
     try {
-      const sellerExists = await this.checkIfSellerExistsProtocol.perform(
+      const sellerExists = await this.checkIfSellerExistsProtocol.check(
         createProduct.sellerEid,
       );
 
@@ -38,20 +38,19 @@ export class CreateProductsUsecase implements ICreateProducts {
         );
       }
 
-      const categoryExists = await this.checkIfCategoryExistsProtocol.perform(
+      const categoryExists = await this.checkIfCategoryExistsProtocol.check(
         createProduct.category,
       );
 
       let categoryId = Number(categoryExists.id);
       if (!categoryExists.exists) {
-        const category = await this.createCategoryProtocol.perform(
+        const category = await this.createCategoryProtocol.create(
           createProduct.category,
-          Number(sellerExists.id),
         );
         categoryId = Number(category.id);
       }
 
-      const product = await this.createProductProtocol.perform(
+      const product = await this.createProductProtocol.create(
         createProduct,
         Number(sellerExists.id),
         categoryId,
@@ -61,7 +60,7 @@ export class CreateProductsUsecase implements ICreateProducts {
     } catch (e) {}
   }
 
-  private getNotFoundEntity(createProduct: BaseInputProductModel) {
+  private getNotFoundEntity(createProduct: BaseInputProductProps) {
     return new NotFoundEntity(EntitiesNames.Seller, {
       key: 'eid',
       value: createProduct.sellerEid,

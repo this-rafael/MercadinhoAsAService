@@ -3,6 +3,7 @@ import { CreateProductInput } from '../DTOS/CreateProductInput';
 import { GenericOutput } from '../DTOS/GenericOutput';
 import { FullProductObject } from '../DTOS/FullProductObject';
 import { ProjectsService } from '../../Adapter/Services/ProjectsService';
+import { Catch } from '../../../Global/Util/Catch';
 
 @Resolver()
 export class ProductsResolver {
@@ -22,17 +23,8 @@ export class ProductsResolver {
     try {
       return await this.service.createProduct(product);
     } catch (e) {
-      console.log(e);
+      console.error('Error creating product', e);
+      return e;
     }
-
-    return new FullProductObject({
-      categoryId: '321312',
-      createdAt: new Date(),
-      name: 'Product Name',
-      price: 123,
-      description: 'Product Description',
-      sellerEid: '21312',
-      updatedAt: new Date(),
-    });
   }
 }

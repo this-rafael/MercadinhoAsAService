@@ -1,9 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { BaseInputProductModel } from '../../Core/Models/ProductsModels';
+import { BaseInputProductProps } from '../../Core/Models/ProductsModels';
 
 @InputType()
 export class CreateProductInput {
-  constructor(builder: BaseInputProductModel) {
+  constructor(builder: BaseInputProductProps) {
     Object.assign(this, builder);
   }
 
@@ -22,7 +22,7 @@ export class CreateProductInput {
   @Field(() => String)
   category: string;
 
-  get toModel(): BaseInputProductModel {
+  get toModel(): BaseInputProductProps {
     return {
       sellerEid: this.sellerEid,
       name: this.name,

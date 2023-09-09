@@ -1,11 +1,11 @@
 import {
-  BaseInputProductModel,
+  BaseInputProductProps,
   FullProductModel,
 } from '../Models/ProductsModels';
 
 export abstract class CreateProductProtocol {
-  abstract perform(
-    createProduct: BaseInputProductModel,
+  abstract create(
+    createProduct: BaseInputProductProps,
     sellerId: number,
     categoryId: number,
   ): Promise<FullProductModel>;

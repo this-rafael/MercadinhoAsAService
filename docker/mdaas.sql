@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 create table customers
 (
-    id        bigint primary key,
+    id        serial primary key,
     eid       uuid        not null unique,
     full_name varchar(50) not null
 );
@@ -16,7 +16,7 @@ COMMENT ON COLUMN customers.full_name is 'Nome completo do cliente';
 
 create table sellers
 (
-    id        bigint primary key,
+    id        serial primary key,
     eid       uuid        not null unique,
     full_name varchar(50) not null
 );
@@ -45,7 +45,7 @@ COMMENT ON COLUMN assets_type.name is 'Nome do tipo de asset';
 -- add id uuid column primary key default unique uuid_generate_v4()
 create table if not exists assets
 (
-    id         bigint primary key,
+    id         serial primary key,
     created_at timestamp default now()              not null,
     updated_at timestamp default now()              not null,
     eid        uuid      default uuid_generate_v4() not null unique,
@@ -65,7 +65,7 @@ COMMENT ON COLUMN assets.type is 'Tipo do asset';
 
 create table if not exists product_categories
 (
-    id          int primary key,
+    id          serial primary key,
     created_at  timestamp default now()              not null,
     updated_at  timestamp default now()              not null,
     name        varchar(50)                          not null,
@@ -83,14 +83,14 @@ COMMENT ON COLUMN product_categories.eid is 'Identificador externo da categoria 
 
 create table if not exists products
 (
-    id           bigint primary key,
+    id           serial primary key,
     created_at   timestamp default now()              not null,
     updated_at   timestamp default now()              not null,
     eid          uuid      default uuid_generate_v4() not null unique,
     name         varchar(50)                          not null,
     description  varchar(255)                         not null,
     category     int                                  not null references product_categories (id),
-    seller_by_id bigint                               not null references sellers (id),
+    seller_by_id int                               not null references sellers (id),
     price        float                                not null
 );
 
@@ -115,7 +115,7 @@ COMMENT ON COLUMN assets.productId is 'Identificador do produto do asset chave e
 
 create table coupon
 (
-    id           bigint primary key,
+    id           serial primary key,
     created_at   timestamp default now()              not null,
     updated_at   timestamp default now()              not null,
     eid          uuid      default uuid_generate_v4() not null unique,
@@ -141,12 +141,12 @@ COMMENT ON COLUMN coupon.used_at is 'Data de uso do cupom';
 
 create table if not exists customers_reviews
 (
-    id          bigint primary key,
+    id          serial primary key,
     created_at  timestamp default now()              not null,
     updated_at  timestamp default now()              not null,
     eid         uuid      default uuid_generate_v4() not null unique,
-    customer_id bigint                               not null references customers (id),
-    product_id  bigint                               not null references products (id),
+    customer_id int                               not null references customers (id),
+    product_id  int                               not null references products (id),
     rating      int                                  not null,
     comment     varchar(255)                         not null
 );
@@ -164,15 +164,15 @@ COMMENT ON COLUMN customers_reviews.comment is 'Comentário do cliente sobre o p
 
 create table if not exists shopping_cart
 (
-    id                bigint primary key,
+    id                serial primary key,
     created_at        timestamp default now()              not null,
     updated_at        timestamp default now()              not null,
     eid               uuid      default uuid_generate_v4() not null unique,
-    shopped_by_id     bigint                               not null references customers (id),
+    shopped_by_id     int                               not null references customers (id),
     products_quantity int                                  not null,
     products_price    float                                not null,
     total             float                                not null,
-    coupon_id         bigint references coupon (id) unique
+    coupon_id         int references coupon (id) unique
 );
 
 COMMENT ON TABLE shopping_cart is 'Tabela do carrinho de compras';
@@ -188,11 +188,11 @@ COMMENT ON COLUMN shopping_cart.coupon_id is 'Identificador do cupom chave estra
 
 create table if not exists shopping_cart_products
 (
-    id               bigint primary key,
+    id               serial primary key,
     created_at       timestamp default now() not null,
     updated_at       timestamp default now() not null,
-    shopping_cart_id bigint                  not null references shopping_cart (id),
-    productId        bigint                  not null references products (id),
+    shopping_cart_id int                  not null references shopping_cart (id),
+    productId        int                  not null references products (id),
     quantity         int                     not null
 );
 
